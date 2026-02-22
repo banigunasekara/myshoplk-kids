@@ -3,257 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyShopLK Kids - My Fun Storybook World!</title>
+    <title>MyShopLK Kids - Magical Flip-Book World!</title>
     
-    <!-- Child-Friendly Rounded Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Boo+City&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    <!-- Child-Friendly Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Bubblegum+Sans&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
     
     <!-- Frameworks & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- React & Babel for Failsafe Single-File Performance -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
         :root {
-            --sky-blue: #38bdf8;
-            --sunny-yellow: #fde047;
-            --story-pink: #f472b6;
+            --soft-blue: #e0f2fe;
+            --ocean-blue: #0ea5e9;
+            --candy-pink: #f472b6;
+            --magic-yellow: #fde047;
             --grass-green: #4ade80;
-            --paper-white: #ffffff;
+            --paper-texture: #fdfbf7;
         }
 
         body {
             margin: 0;
             font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(to bottom, #7dd3fc 0%, #bae6fd 100%);
-            color: #1e293b;
+            background: linear-gradient(135deg, #bae6fd 0%, #e0f2fe 50%, #f9a8d4 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            color: #1e293b;
         }
 
-        /* --- CARTOON CLOUDS BACKGROUND --- */
-        .cloud-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .cloud {
-            position: absolute;
-            color: white;
-            font-size: 5rem;
-            opacity: 0.8;
-            animation: moveCloud linear infinite;
-        }
-        @keyframes moveCloud {
-            from { transform: translateX(-100px); }
-            to { transform: translateX(120vw); }
-        }
-
-        /* --- MODERN GOOGLE TRANSLATE (KIDS STYLE) --- */
+        /* --- MODERN GOOGLE TRANSLATE FIX --- */
         #google_translate_element {
+            display: inline-block;
             background: white;
             padding: 8px 15px;
-            border-radius: 20px;
-            border: 4px solid var(--sky-blue);
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            border-radius: 50px;
+            border: 4px solid var(--ocean-blue);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
         }
+        #google_translate_element:hover { transform: scale(1.05); }
+        .goog-te-gadget { font-family: 'Quicksand' !important; color: transparent !important; }
         .goog-te-gadget .goog-te-combo {
-            font-family: 'Quicksand' !important;
-            font-weight: 700;
-            color: #0369a1;
-            border: none;
+            background: transparent !important;
+            color: #0369a1 !important;
+            border: none !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            cursor: pointer;
             outline: none;
         }
         .goog-te-banner-frame { display: none !important; }
         body { top: 0 !important; }
 
-        /* --- HAPPY HEADER --- */
-        header {
-            background: #fff;
-            padding: 1rem 2rem;
-            border-bottom: 6px solid #fbbf24;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border-radius: 0 0 40px 40px;
+        /* --- 3D BOOK ENGINE STYLES --- */
+        .book-scene {
+            perspective: 2000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
         }
 
-        .logo-text {
-            font-family: 'Bubblegum Sans', cursive;
-            font-size: 2.5rem;
-            color: #0ea5e9;
-            text-shadow: 3px 3px 0px #fbbf24;
-        }
-
-        /* --- CARTOON LIBRARY UI --- */
-        .library-title {
-            font-family: 'Bubblegum Sans', cursive;
-            font-size: 4rem;
-            color: #ec4899;
-            text-shadow: 3px 3px 0 #fff;
-        }
-
-        .book-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 40px;
-            border: 6px solid #38bdf8;
-            box-shadow: 0 15px 0 #0ea5e9;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-
-        .book-card:hover {
-            transform: translateY(-15px) scale(1.05);
-            box-shadow: 0 25px 0 #0ea5e9;
-        }
-
-        .book-card img {
-            border-radius: 25px;
-            border: 4px solid #fde047;
-        }
-
-        /* --- REALISTIC BOOK READER (BRIGHT & CLEAN) --- */
-        .book-wrapper {
+        .book-container {
             width: 95%;
             max-width: 1100px;
             height: 70vh;
             min-height: 500px;
-            background: #fbbf24;
-            border-radius: 40px;
-            position: relative;
-            display: flex;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
-            border: 12px solid #ffffff;
-            overflow: hidden;
-            margin: 20px auto;
-        }
-
-        .book-spine {
-            position: absolute;
-            left: 50%;
-            top: 0; bottom: 0;
-            width: 40px;
-            background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(255,255,255,0.4), rgba(0,0,0,0.1));
-            transform: translateX(-50%);
-            z-index: 50;
-        }
-
-        .page {
-            flex: 1;
-            height: 100%;
             background: white;
             position: relative;
             display: flex;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.25);
+            border-radius: 15px;
+            transform-style: preserve-3d;
+            border: 10px solid white;
+        }
+
+        /* The Spine Shadow */
+        .book-container::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 50px;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent 50%, rgba(0,0,0,0.1));
+            transform: translateX(-50%);
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .book-page {
+            flex: 1;
+            height: 100%;
+            background: var(--paper-texture);
+            position: relative;
+            display: flex;
             flex-direction: column;
-            padding: 40px;
+            padding: 50px;
             box-sizing: border-box;
             overflow-y: auto;
+            transition: 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
         .page-left {
-            border-right: 2px solid #eee;
-            background: linear-gradient(to left, #f9f9f9 0%, #fff 10%);
+            border-radius: 10px 0 0 10px;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            background: linear-gradient(to left, #f0f0f0 0%, var(--paper-texture) 8%);
         }
 
-        .story-text-big {
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            line-height: 1.3;
+        .page-right {
+            border-radius: 0 10px 10px 0;
+            background: linear-gradient(to right, #f0f0f0 0%, var(--paper-texture) 8%);
+            padding: 0; /* Image page */
+        }
+
+        .story-text-huge {
+            font-family: 'Comic Neue', cursive;
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.2;
             color: #1e293b;
             text-align: center;
+            font-weight: 700;
         }
 
-        /* --- BOUNCY CONTROLS --- */
-        .nav-btn {
-            background: #f472b6;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 900;
-            padding: 1rem 3rem;
-            border-radius: 50px;
-            border: 5px solid white;
-            box-shadow: 0 8px 0 #db2777;
-            transition: 0.2s;
-        }
-
-        .nav-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 4px 0 #db2777;
-        }
-
-        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        .fullscreen-joy {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 70px;
-            height: 70px;
-            background: #4ade80;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 8px 0 #16a34a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            color: white;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        /* Animation for page turns */
-        .page-bounce {
-            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        /* Animated Elements */
+        .bounce-in { animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes bounceIn {
-            0% { transform: scale(0.9); opacity: 0; }
+            0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
+        .cloud-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+        .floating-cloud {
+            position: absolute; color: white; opacity: 0.6; font-size: 6rem;
+            animation: drift linear infinite;
+        }
+        @keyframes drift {
+            from { transform: translateX(-10vw); }
+            to { transform: translateX(110vw); }
+        }
+
+        /* Controls */
+        .magic-nav-btn {
+            background: var(--candy-pink);
+            color: white;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-weight: 900;
+            border: 6px solid white;
+            box-shadow: 0 10px 0 #db2777;
+            transition: 0.2s;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+        .magic-nav-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #db2777; }
+        .magic-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+
+        .fullscreen-trigger {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 70px; height: 70px;
+            background: var(--grass-green);
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            color: white; font-size: 2rem;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 1000;
+        }
+
+        /* Mobile Fixes */
         @media (max-width: 850px) {
-            .book-wrapper { flex-direction: column; height: auto; min-height: 95vh; }
-            .book-spine { display: none; }
-            .page { padding: 30px 20px; }
-            .page-right { height: 400px; }
+            .book-container { flex-direction: column; height: auto; min-height: 95vh; }
+            .book-container::after { display: none; }
+            .book-page { width: 100%; flex: none; min-height: 400px; padding: 40px 20px; }
+            .page-right { height: 450px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Animated Clouds Background -->
-    <div class="cloud-bg">
-        <i class="fas fa-cloud cloud" style="top: 10%; animation-duration: 25s;"></i>
-        <i class="fas fa-cloud cloud" style="top: 40%; animation-duration: 35s; animation-delay: -5s;"></i>
-        <i class="fas fa-cloud cloud" style="top: 70%; animation-duration: 30s; animation-delay: -10s;"></i>
-    </div>
+    <div id="root"></div>
 
-    <header class="flex flex-col md:flex-row justify-between items-center">
-        <div class="flex items-center gap-4">
-            <div class="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-white text-3xl shadow-lg border-4 border-white animate-bounce">
-                <i class="fas fa-face-smile-beam"></i>
-            </div>
-            <h1 class="logo-text">My Story World!</h1>
-        </div>
-
-        <div class="flex items-center gap-6">
-            <div id="google_translate_element"></div>
-            <div class="flex items-center gap-3 bg-pink-100 px-4 py-2 rounded-full border-2 border-pink-300">
-                <i class="fas fa-paw text-pink-500"></i>
-                <span class="text-pink-600 font-bold text-sm" id="story-buddy">Story Buddy: Eagle</span>
-            </div>
-        </div>
-    </header>
-
-    <main id="app-world">
-        <!-- Fun Content Goes Here -->
-    </main>
-
-    <button class="fullscreen-joy" onclick="toggleFullScreen()" title="Big Screen Mode!">
-        <i class="fas fa-expand-arrows-alt"></i>
-    </button>
-
+    <!-- Google Translate Script -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
@@ -263,153 +202,194 @@
             }, 'google_translate_element');
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-    <script>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
         const myStories = [{
             id: 'eli-the-elephant',
-            title: "Eli's Peanuts!",
+            title: "Eli's Magical Peanuts!",
             cover: "coverpage.jpg",
-            funny_moral: "Yay! Truth makes us happy! ❤️",
+            funny_moral: "Yay! Honesty is the Magic Secret to Happiness! ❤️",
             pages: [
-                { text: "Once, a cute elephant named Eli found LOTS of peanuts! Yum! 🥜", image: "page1.jpg" },
-                { text: "Eli ate them all! But he said, 'A silly monkey did it!' 🐒", image: "page2.jpg" },
-                { text: "Oh no! Eli's tummy went RUMBLE RUMBLE! 🤢", image: "page3.jpg" },
-                { text: "Eli told Mama the truth. She gave him a big hug! 🤗", image: "page4.jpg" },
-                { text: "The truth is like magic! Eli felt happy and light! ✨", image: "page5.jpg" }
+                { text: "Once, a cute elephant named Eli found LOTS of yummy peanuts! 🥜", image: "page1.jpg" },
+                { text: "Eli ate them all! But he said, 'A silly monkey took them!' 🐒", image: "page2.jpg" },
+                { text: "Oh no! Eli's tummy went RUMBLE RUMBLE! It felt very heavy. 🤢", image: "page3.jpg" },
+                { text: "Eli told Mama the truth. She gave him a giant warm hug! 🤗", image: "page4.jpg" },
+                { text: "The truth is like magic! Eli felt happy and light as a feather! ✨", image: "page5.jpg" }
             ]
         }];
 
-        let activeBook = null;
-        let currentPage = 0;
+        function App() {
+            const [pageIndex, setPageIndex] = useState(-1); // -1 is Library
+            const [story] = useState(myStories[0]);
+            const [buddyName, setBuddyName] = useState("Eagle");
 
-        function renderLibrary() {
-            activeBook = null;
-            const container = document.getElementById('app-world');
-            container.innerHTML = `
-                <div class="text-center py-12">
-                    <h2 class="library-title mb-12 animate-pulse">Pick a Story!</h2>
-                    
-                    <div class="max-w-6xl mx-auto px-6 flex justify-center">
-                        ${myStories.map(s => `
-                            <div class="book-card w-full max-w-sm" onclick="startStory('${s.id}')">
-                                <img src="${s.cover}" alt="${s.title}" class="w-full h-80 object-cover mb-6">
-                                <h3 class="text-3xl font-bold text-blue-600 mb-2">${s.title}</h3>
-                                <div class="bg-yellow-200 text-yellow-800 font-black py-2 rounded-full text-sm uppercase tracking-widest">
-                                    Let's Play!
+            // Keyboard Support
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (pageIndex === -1) return;
+                    if (e.key === "ArrowRight") movePage(1);
+                    if (e.key === "ArrowLeft") movePage(-1);
+                };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [pageIndex]);
+
+            // Auto-update Story Buddy based on Google Translate
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    const select = document.querySelector('.goog-te-combo');
+                    if (select) {
+                        const lang = select.value;
+                        if (lang === 'si') setBuddyName("Wali Kukula");
+                        else if (lang === 'hi') setBuddyName("Tiger");
+                        else setBuddyName("Eagle");
+                    }
+                }, 2000);
+                return () => clearInterval(interval);
+            }, []);
+
+            const readAloud = (text) => {
+                window.speechSynthesis.cancel();
+                const msg = new SpeechSynthesisUtterance(text);
+                
+                // Detect Current Language from Google Translate
+                const select = document.querySelector('.goog-te-combo');
+                if (select && select.value) {
+                    msg.lang = select.value;
+                } else {
+                    msg.lang = 'en-US';
+                }
+                
+                msg.pitch = 1.4; // Child-friendly pitch
+                msg.rate = 0.85; // Easy reading speed
+                window.speechSynthesis.speak(msg);
+            };
+
+            const toggleFullScreen = () => {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else document.exitFullscreen();
+            };
+
+            const movePage = (dir) => {
+                const newIdx = pageIndex + dir;
+                if (newIdx >= -1 && newIdx <= story.pages.length) {
+                    setPageIndex(newIdx);
+                    window.speechSynthesis.cancel();
+                }
+            };
+
+            if (pageIndex === -1) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center">
+                        <header className="w-full flex flex-col md:flex-row justify-between items-center p-6 bg-white/80 backdrop-blur-md border-b-8 border-yellow-400 rounded-b-[50px] shadow-xl">
+                            <div className="flex items-center gap-4 mb-4 md:mb-0">
+                                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-white text-4xl shadow-lg animate-bounce">
+                                    <i className="fas fa-face-smile-beam"></i>
+                                </div>
+                                <h1 className="text-4xl font-['Bubblegum_Sans'] text-sky-500 drop-shadow-md">My Story World!</h1>
+                            </div>
+                            <div className="flex flex-wrap justify-center items-center gap-4">
+                                <div id="google_translate_element"></div>
+                                <div className="bg-pink-100 px-6 py-2 rounded-full border-4 border-pink-300 flex items-center gap-2">
+                                    <i className="fas fa-paw text-pink-500"></i>
+                                    <span className="font-bold text-pink-600">Buddy: {buddyName}</span>
                                 </div>
                             </div>
-                        `).join('')}
+                        </header>
+
+                        <main className="flex-grow flex flex-col items-center justify-center p-10">
+                            <h2 className="text-5xl font-['Bubblegum_Sans'] text-pink-500 mb-12 animate-pulse">Pick a Fun Tale!</h2>
+                            <div className="group cursor-pointer transform hover:scale-105 transition duration-500" onClick={() => setPageIndex(0)}>
+                                <div className="bg-white p-6 rounded-[50px] border-[10px] border-sky-400 shadow-[0_20px_0_#0ea5e9]">
+                                    <img src={story.cover} className="w-80 h-[450px] object-cover rounded-[30px] border-4 border-yellow-300" alt="Cover" />
+                                    <h3 className="text-3xl font-bold text-center mt-6 text-sky-600 uppercase">{story.title}</h3>
+                                    <div className="mt-4 bg-yellow-300 text-yellow-900 font-black py-3 rounded-full text-center uppercase tracking-widest">
+                                        Open Magic Book!
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                        <footer className="p-6 text-sky-400 font-bold">© MyShopLK Kids Magic Library</footer>
                     </div>
-                </div>
-            `;
-        }
-
-        function startStory(id) {
-            activeBook = myStories.find(s => s.id === id);
-            currentPage = 0;
-            renderBookPage();
-        }
-
-        function renderBookPage() {
-            const container = document.getElementById('app-world');
-            const isEnd = currentPage === activeBook.pages.length;
-
-            if (isEnd) {
-                container.innerHTML = `
-                    <div class="min-h-screen flex flex-col items-center justify-center p-8 text-center">
-                        <div class="w-32 h-32 bg-yellow-400 rounded-full flex items-center justify-center border-8 border-white shadow-2xl mb-8 animate-bounce">
-                            <i class="fas fa-star text-white text-6xl"></i>
-                        </div>
-                        <h2 class="library-title text-blue-500 mb-6">YOU DID IT!</h2>
-                        <div class="bg-white p-10 rounded-[4rem] border-8 border-pink-400 shadow-2xl">
-                            <p class="text-4xl font-bold text-pink-600">"${activeBook.funny_moral}"</p>
-                        </div>
-                        <button onclick="renderLibrary()" class="nav-btn mt-12 bg-green-500 border-green-200 shadow-[0_8px_0_#16a34a]">
-                            Pick Another Story!
-                        </button>
-                    </div>
-                `;
-                return;
+                );
             }
 
-            const page = activeBook.pages[currentPage];
-            container.innerHTML = `
-                <div class="flex flex-col items-center py-8 px-4">
-                    <button onclick="renderLibrary()" class="bg-white px-6 py-2 rounded-full font-black text-blue-500 border-4 border-blue-200 mb-6 hover:scale-110 transition">
-                        <i class="fas fa-house"></i> Home
+            const isEnd = pageIndex === story.pages.length;
+            const currentPage = story.pages[pageIndex];
+
+            return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-4">
+                    <button onClick={() => setPageIndex(-1)} className="mb-6 bg-white px-8 py-3 rounded-full font-black text-sky-500 border-4 border-sky-200 hover:bg-sky-50 transition shadow-lg">
+                        <i className="fas fa-house"></i> Go Back Home
                     </button>
 
-                    <div class="book-wrapper page-bounce">
-                        <div class="book-spine"></div>
-                        
-                        <!-- Left: Text -->
-                        <div class="page page-left">
-                            <button onclick="readAloud('${page.text.replace(/'/g, "\\'")}')" class="w-16 h-16 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center border-4 border-white shadow-xl hover:scale-125 transition mb-8">
-                                <i class="fas fa-volume-up text-2xl"></i>
-                            </button>
-                            <div class="story-text-big">
-                                ${page.text}
-                            </div>
-                            <div class="mt-auto text-center font-bold text-gray-300">Page ${currentPage + 1}</div>
-                        </div>
-
-                        <!-- Right: Cartoon Image -->
-                        <div class="page page-right">
-                            <img src="${page.image}" class="w-full h-full object-cover" alt="Happy Scene">
+                    <div className="book-scene w-full">
+                        <div className="book-container bounce-in">
+                            {isEnd ? (
+                                <div className="w-full flex flex-col items-center justify-center p-12 text-center bg-white">
+                                    <div className="w-40 h-40 bg-yellow-400 rounded-full flex items-center justify-center border-[12px] border-white shadow-2xl mb-10 animate-bounce">
+                                        <i className="fas fa-star text-white text-7xl"></i>
+                                    </div>
+                                    <h2 className="text-6xl font-['Bubblegum_Sans'] text-sky-500 mb-6">YAY! YOU DID IT!</h2>
+                                    <div className="max-w-2xl bg-sky-50 p-12 rounded-[60px] border-8 border-pink-400 shadow-2xl">
+                                        <p className="text-4xl font-bold text-pink-600 italic">"{story.funny_moral}"</p>
+                                    </div>
+                                    <button onClick={() => setPageIndex(-1)} className="magic-nav-btn mt-12 bg-green-500 shadow-[0_10px_0_#16a34a] border-green-200">
+                                        Read More Tales!
+                                    </button>
+                                </div>
+                            ) : (
+                                <React.Fragment>
+                                    {/* Left Page: Text */}
+                                    <div className="book-page page-left">
+                                        <button onClick={() => readAloud(currentPage.text)} className="w-20 h-20 bg-sky-100 text-sky-500 rounded-3xl flex items-center justify-center border-4 border-white shadow-xl hover:scale-110 transition mb-10">
+                                            <i className="fas fa-volume-up text-3xl"></i>
+                                        </button>
+                                        <div className="story-text-huge">
+                                            {currentPage.text}
+                                        </div>
+                                        <div className="mt-auto text-gray-300 font-bold tracking-widest uppercase text-sm">
+                                            Page {pageIndex + 1} • {buddyName}'s Realm
+                                        </div>
+                                    </div>
+                                    {/* Right Page: Cartoon Image */}
+                                    <div className="book-page page-right">
+                                        <img key={pageIndex} src={currentPage.image} className="w-full h-full object-cover" alt="Scene" />
+                                    </div>
+                                </React.Fragment>
+                            )}
                         </div>
                     </div>
 
-                    <div class="flex gap-8 mt-10">
-                        <button class="nav-btn bg-blue-500 shadow-[0_8px_0_#0369a1]" onclick="movePage(-1)" ${currentPage === 0 ? 'disabled' : ''}>
-                            <i class="fas fa-arrow-left"></i> Back
-                        </button>
-                        <button class="nav-btn bg-pink-500 shadow-[0_8px_0_#db2777]" onclick="movePage(1)">
-                            ${currentPage === activeBook.pages.length - 1 ? 'Last Page!' : 'Next!'} <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
+                    {!isEnd && (
+                        <div className="flex gap-10 mt-12">
+                            <button className="magic-nav-btn bg-sky-500 shadow-[0_10px_0_#0369a1]" onClick={() => movePage(-1)} disabled={pageIndex === 0}>
+                                <i className="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button className="magic-nav-btn" onClick={() => movePage(1)}>
+                                {pageIndex === story.pages.length - 1 ? "Finish! 🎉" : "Next Page!"} <i className="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    )}
+
+                    <button className="fullscreen-trigger" onClick={toggleFullScreen}>
+                        <i className="fas fa-expand-arrows-alt"></i>
+                    </button>
+
+                    <div className="cloud-bg">
+                        <i className="fas fa-cloud floating-cloud" style={{top: '15%', animationDuration: '30s'}}></i>
+                        <i className="fas fa-cloud floating-cloud" style={{top: '50%', animationDuration: '45s', animationDelay: '-10s'}}></i>
+                        <i className="fas fa-cloud floating-cloud" style={{top: '80%', animationDuration: '35s', animationDelay: '-5s'}}></i>
                     </div>
                 </div>
-            `;
+            );
         }
 
-        function movePage(dir) {
-            currentPage += dir;
-            renderBookPage();
-        }
-
-        // Support arrow keys for easy PC use
-        document.addEventListener('keydown', (e) => {
-            if (!activeBook) return;
-            if (e.key === "ArrowRight") movePage(1);
-            if (e.key === "ArrowLeft" && currentPage > 0) movePage(-1);
-        });
-
-        function readAloud(text) {
-            window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.pitch = 1.3; // Cute kid voice
-            msg.rate = 0.9;
-            window.speechSynthesis.speak(msg);
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        }
-
-        // Update Story Buddy based on language
-        setInterval(() => {
-            const select = document.querySelector('.goog-te-combo');
-            const buddy = document.getElementById('story-buddy');
-            if (select && buddy) {
-                const lang = select.value;
-                if (lang === 'si') buddy.innerText = "Story Buddy: Wali Kukula";
-                else if (lang === 'hi') buddy.innerText = "Story Buddy: Tiger";
-                else buddy.innerText = "Story Buddy: Eagle";
-            }
-        }, 3000);
-
-        window.onload = renderLibrary;
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
