@@ -10,15 +10,16 @@ import {
   Maximize, 
   Minimize, 
   X,
-  Sparkles
+  Sparkles,
+  Award
 } from 'lucide-react';
 
 // --- 1. Global Realms (Countries) with detailed Icons/Facts ---
 const realms = [
-  { code: 'en', name: 'English World', flag: '🇺🇸', animal: 'Bald Eagle', color: 'bg-blue-600' },
-  { code: 'si', name: 'ශ්‍රී ලංකාව', flag: '🇱🇰', animal: 'Jungle Fowl', color: 'bg-orange-600' },
-  { code: 'hi', name: 'भारत', flag: '🇮🇳', animal: 'Bengal Tiger', color: 'bg-orange-400' },
-  { code: 'es', name: 'España', flag: '🇪🇸', animal: 'Bull', color: 'bg-red-600' },
+  { code: 'en', name: 'English World', flag: '🇺🇸', animal: 'Bald Eagle (National Bird)', color: 'bg-blue-600' },
+  { code: 'si', name: 'ශ්‍රී ලංකාව', flag: '🇱🇰', animal: 'Wali Kukula (Jungle Fowl)', color: 'bg-orange-600' },
+  { code: 'hi', name: 'भारत', flag: '🇮🇳', animal: 'Bengal Tiger (National Animal)', color: 'bg-orange-400' },
+  { code: 'es', name: 'España', flag: '🇪🇸', animal: 'Spanish Imperial Eagle', color: 'bg-red-600' },
   { code: 'fr', name: 'France', flag: '🇫🇷', animal: 'Gallic Rooster', color: 'bg-blue-800' },
   { code: 'zh', name: '中国', flag: '🇨🇳', animal: 'Giant Panda', color: 'bg-red-700' }
 ];
@@ -53,7 +54,9 @@ export default function App() {
   // Handle Full Screen
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
+      document.documentElement.requestFullscreen().catch(e => {
+        console.error(`Error attempting to enable full-screen mode: ${e.message}`);
+      });
       setIsFullScreen(true);
     } else {
       if (document.exitFullscreen) {
@@ -71,12 +74,14 @@ export default function App() {
   const closeBook = () => setCurrentBook(null);
 
   const turnPage = (dir) => {
+    if (flipDir) return; // Prevent double clicking
     setFlipDir(dir === 'next' ? 'animate-page-flip-next' : 'animate-page-flip-prev');
+    
     setTimeout(() => {
       if (dir === 'next' && pageIndex < currentBook.pages.length) setPageIndex(pageIndex + 1);
       if (dir === 'prev' && pageIndex > 0) setPageIndex(pageIndex - 1);
       setFlipDir('');
-    }, 400);
+    }, 600);
   };
 
   const readAloud = (text) => {
@@ -84,44 +89,47 @@ export default function App() {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = selectedRealm.code;
     utterance.pitch = 1.1;
-    utterance.rate = 0.9;
+    utterance.rate = 0.85; // Slightly slower for kids
     window.speechSynthesis.speak(utterance);
   };
 
   // --- Home / Library View ---
   if (!currentBook) {
     return (
-      <div className="min-h-screen bg-[#0f172a] text-white font-sans selection:bg-gold selection:text-black overflow-x-hidden">
+      <div className="min-h-screen bg-[#020617] text-white font-sans selection:bg-orange-500 selection:text-white overflow-x-hidden">
         {/* Animated Background Magic */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600 rounded-full blur-[120px] animate-pulse delay-700" />
+        <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-900 rounded-full blur-[150px] animate-pulse" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-emerald-900 rounded-full blur-[150px] animate-pulse delay-1000" />
         </div>
 
         {/* Global Navigation */}
-        <nav className="relative z-10 flex flex-col md:flex-row justify-between items-center px-6 py-6 border-b border-white/10 backdrop-blur-md bg-black/20">
-          <div className="flex items-center gap-3 mb-4 md:mb-0">
-            <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-xl shadow-lg shadow-orange-500/20">
-              <BookOpen className="text-white w-8 h-8" />
+        <nav className="relative z-20 flex flex-col md:flex-row justify-between items-center px-8 py-6 border-b border-white/5 backdrop-blur-xl bg-black/40 sticky top-0">
+          <div className="flex items-center gap-4 mb-6 md:mb-0 group cursor-pointer">
+            <div className="p-3 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-2xl shadow-xl shadow-orange-500/20 group-hover:scale-110 transition-transform">
+              <Sparkles className="text-white w-8 h-8" />
             </div>
-            <h1 className="text-2xl font-black tracking-tighter uppercase italic">
-              MyShopLK <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Magical Kids</span>
-            </h1>
+            <div>
+              <h1 className="text-2xl font-black tracking-tighter uppercase leading-none">
+                MyShopLK <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 italic">Magic Kids</span>
+              </h1>
+              <p className="text-[10px] font-bold tracking-[0.2em] text-white/40 uppercase">Interactive Story Realm</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-white/5 p-1 rounded-2xl border border-white/10">
+          <div className="flex flex-wrap justify-center items-center gap-2 bg-white/5 p-1.5 rounded-[2rem] border border-white/10 backdrop-blur-md">
             {realms.map((realm) => (
               <button
                 key={realm.code}
                 onClick={() => setSelectedRealm(realm)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-500 ${
                   selectedRealm.code === realm.code 
-                  ? `${realm.color} shadow-lg scale-105` 
-                  : 'hover:bg-white/10'
+                  ? `${realm.color} shadow-lg shadow-black/40 scale-105` 
+                  : 'hover:bg-white/10 text-white/60'
                 }`}
               >
-                <span className="text-xl">{realm.flag}</span>
-                <span className={`text-xs font-bold uppercase ${selectedRealm.code === realm.code ? 'block' : 'hidden md:block'}`}>
+                <span className="text-xl drop-shadow-sm">{realm.flag}</span>
+                <span className={`text-xs font-black uppercase tracking-wider ${selectedRealm.code === realm.code ? 'block' : 'hidden lg:block'}`}>
                   {realm.name}
                 </span>
               </button>
@@ -130,51 +138,59 @@ export default function App() {
         </nav>
 
         {/* Hero Content */}
-        <main className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10 text-orange-400 font-bold text-sm mb-6 animate-bounce">
-              <Sparkles size={16} /> Exploring with the {selectedRealm.animal}
+        <main className="relative z-10 max-w-7xl mx-auto px-8 py-16">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-3 px-6 py-2.5 bg-white/5 rounded-full border border-white/10 text-yellow-400 font-black text-xs mb-8 animate-bounce uppercase tracking-widest">
+              <Award size={14} className="animate-spin-slow" /> Current Realm: {selectedRealm.animal}
             </div>
-            <h2 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-              Stories that Spark <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-cyan-500">Imagination</span>
+            <h2 className="text-6xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter">
+              Discover <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">The Magic</span>
             </h2>
+            <p className="text-lg text-white/50 font-medium leading-relaxed">
+              Step into a world where every page turn is a journey. Localized stories designed to nurture young minds across the globe.
+            </p>
           </div>
 
           {/* Book Shelf */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
             {storyDatabase.map((book) => (
               <div 
                 key={book.id} 
                 onClick={() => openBook(book)}
-                className="group relative cursor-pointer"
+                className="group relative cursor-pointer perspective-1000"
               >
-                <div className="absolute -inset-1 bg-gradient-to-r from-orange-600 to-yellow-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative bg-[#1e293b] rounded-[2.5rem] p-6 h-full flex flex-col border border-white/10">
-                  <div className="relative h-72 rounded-3xl overflow-hidden mb-6 shadow-2xl">
-                    <img src={book.cover} alt={book.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                      <span className="px-3 py-1 bg-orange-500 text-white text-xs font-black rounded-lg uppercase tracking-widest">
+                {/* 3D Card Hover Effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-orange-600 via-yellow-500 to-pink-600 rounded-[3rem] blur-xl opacity-20 group-hover:opacity-60 transition duration-700"></div>
+                
+                <div className="relative bg-[#111827] rounded-[3rem] p-8 h-full flex flex-col border border-white/10 transition-all duration-500 group-hover:-translate-y-4 group-hover:rotate-1 shadow-2xl">
+                  <div className="relative h-80 rounded-[2.5rem] overflow-hidden mb-8 shadow-inner-xl">
+                    <img src={book.cover} alt={book.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                    <div className="absolute top-6 left-6">
+                       <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md text-white text-[10px] font-black rounded-full uppercase tracking-widest border border-white/20">
                         {book.theme}
                       </span>
                     </div>
                   </div>
-                  <h3 className="text-2xl font-black mb-2 text-white">{book.title}</h3>
-                  <p className="text-gray-400 text-sm font-medium mb-6 flex-grow italic">"{book.moral}"</p>
-                  <button className="w-full py-4 bg-white text-black font-black rounded-2xl hover:bg-orange-500 hover:text-white transition-colors duration-300 uppercase tracking-tighter">
-                    Open Magic Book
+                  
+                  <h3 className="text-3xl font-black mb-4 text-white group-hover:text-orange-400 transition-colors leading-tight">{book.title}</h3>
+                  <p className="text-white/40 text-sm font-semibold mb-8 flex-grow leading-relaxed italic line-clamp-2">"{book.moral}"</p>
+                  
+                  <button className="flex items-center justify-center gap-3 w-full py-5 bg-gradient-to-r from-orange-500 to-red-600 text-white font-black rounded-[1.5rem] shadow-xl shadow-orange-600/20 group-hover:shadow-orange-600/40 transition-all uppercase text-sm tracking-widest">
+                    Start Reading <ChevronRight size={18} />
                   </button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Passive Income Footer Space */}
-          <div className="mt-20 p-8 rounded-[3rem] bg-white/5 border border-white/10 text-center">
-            <p className="text-xs text-white/30 font-bold uppercase tracking-widest mb-4">Space for Parents & Partners</p>
-            <div className="h-24 flex items-center justify-center border-2 border-dashed border-white/10 rounded-2xl text-white/20 font-black italic">
-              Google AdSense Display Banner
+          {/* Partner Space */}
+          <div className="mt-32 p-12 rounded-[4rem] bg-gradient-to-b from-white/5 to-transparent border border-white/10 text-center relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.4em] mb-8">Magical Partners</p>
+            <div className="h-32 flex items-center justify-center border-4 border-dashed border-white/5 rounded-3xl text-white/10 font-black italic text-2xl">
+              Google AdSense Banner Area
             </div>
           </div>
         </main>
@@ -187,86 +203,105 @@ export default function App() {
   const pageData = isEndPage ? null : currentBook.pages[pageIndex];
 
   return (
-    <div className="fixed inset-0 bg-[#020617] flex flex-col items-center justify-center z-50 p-4 md:p-8 font-sans overflow-hidden">
-      {/* Reader Nav */}
-      <div className="w-full max-w-7xl flex justify-between items-center mb-6 z-10">
+    <div className="fixed inset-0 bg-[#010409] flex flex-col items-center justify-center z-[100] p-4 md:p-10 font-sans overflow-hidden">
+      
+      {/* Immersive Controls */}
+      <div className="w-full max-w-7xl flex justify-between items-center mb-8 z-50">
         <button 
           onClick={closeBook}
-          className="flex items-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition"
+          className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl border border-white/10 transition backdrop-blur-md"
         >
-          <X size={20} /> <span className="hidden md:inline">Exit Library</span>
+          <X size={20} className="group-hover:rotate-90 transition-transform" /> 
+          <span className="hidden sm:inline uppercase text-xs tracking-widest">Close Book</span>
         </button>
         
         <div className="flex items-center gap-4">
-          <div className="px-4 py-2 bg-white/5 rounded-full border border-white/10 text-xs font-black text-gray-400">
-            {selectedRealm.flag} {selectedRealm.name} Realm
+          <div className="hidden md:flex flex-col items-end">
+             <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Active Realm</span>
+             <span className="text-sm font-bold text-orange-400">{selectedRealm.flag} {selectedRealm.name}</span>
           </div>
+          <div className="w-px h-8 bg-white/10 hidden md:block" />
           <button 
             onClick={toggleFullScreen}
-            className="p-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl border border-white/10"
+            className="p-3.5 bg-white/5 hover:bg-white/10 text-white rounded-2xl border border-white/10 transition active:scale-90"
           >
-            {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+            {isFullScreen ? <Minimize size={22} /> : <Maximize size={22} />}
           </button>
         </div>
       </div>
 
-      {/* The 3D Book Container */}
-      <div className="relative w-full max-w-6xl h-full max-h-[750px] flex items-center justify-center">
+      {/* The 3D Book Experience */}
+      <div className="relative w-full max-w-7xl h-full max-h-[850px] flex items-center justify-center perspective-[3000px]">
         
-        {/* Book Spine Shadow Effect */}
-        <div className="absolute inset-y-0 left-1/2 w-16 bg-black/20 blur-2xl z-20 -translate-x-1/2 hidden md:block" />
+        {/* Shadow & Depth */}
+        <div className="absolute inset-y-10 left-1/2 w-24 bg-black/60 blur-[120px] z-0 -translate-x-1/2 pointer-events-none" />
 
-        <div className={`relative w-full h-full bg-[#f8f5f0] shadow-[0_50px_100px_rgba(0,0,0,0.6)] rounded-2xl overflow-hidden flex flex-col md:flex-row border-4 border-[#333] ${flipDir}`}>
+        <div className={`relative w-full h-full bg-[#fdfaf5] shadow-[0_60px_120px_rgba(0,0,0,0.8)] rounded-3xl overflow-hidden flex flex-col md:flex-row border-[12px] border-[#1a1a1a] transition-all duration-700 ${flipDir}`}>
           
+          {/* Central Binding Shadow */}
+          <div className="absolute inset-y-0 left-1/2 w-1.5 bg-black/10 z-20 -translate-x-1/2 hidden md:block" />
+          <div className="absolute inset-y-0 left-1/2 w-12 bg-gradient-to-r from-black/5 via-transparent to-black/5 z-10 -translate-x-1/2 hidden md:block" />
+
           {isEndPage ? (
-            <div className="w-full h-full bg-gradient-to-br from-orange-50 to-orange-100 flex flex-col items-center justify-center p-12 text-center">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-xl mb-8 animate-bounce">
-                <CheckCircle className="text-green-500 w-16 h-16" />
-              </div>
-              <h2 className="text-5xl font-black text-gray-900 mb-6 uppercase tracking-tighter">The End!</h2>
-              <div className="max-w-xl bg-white p-10 rounded-[3rem] shadow-2xl border-2 border-orange-200">
-                <h3 className="text-orange-600 font-black uppercase text-sm tracking-widest mb-4 flex items-center justify-center gap-2">
-                  <Star className="fill-orange-600" /> Wisdom Gained <Star className="fill-orange-600" />
-                </h3>
-                <p className="text-3xl font-serif text-gray-800 italic leading-relaxed">
+            <div className="w-full h-full bg-[#fafafa] flex flex-col items-center justify-center p-16 text-center animate-fade-in">
+               <div className="relative mb-12">
+                  <div className="absolute inset-0 bg-yellow-400/20 blur-3xl animate-pulse"></div>
+                  <Award className="text-yellow-500 w-32 h-32 relative z-10 animate-bounce" />
+               </div>
+              <h2 className="text-6xl md:text-8xl font-black text-gray-900 mb-8 uppercase tracking-tighter">The End</h2>
+              <div className="max-w-2xl bg-white p-12 rounded-[4rem] shadow-2xl border-b-8 border-orange-500 relative">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-orange-600 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
+                  Golden Moral
+                </div>
+                <p className="text-4xl font-serif text-gray-800 italic leading-snug">
                   "{currentBook.moral}"
                 </p>
               </div>
-              <button onClick={closeBook} className="mt-12 px-10 py-4 bg-orange-600 text-white font-black rounded-2xl shadow-lg hover:bg-orange-700 transition uppercase tracking-widest">
-                Browse More Magic
+              <button 
+                onClick={closeBook} 
+                className="mt-16 px-12 py-5 bg-black text-white font-black rounded-3xl shadow-2xl hover:bg-orange-600 transition-all duration-300 uppercase tracking-[0.2em] active:scale-95"
+              >
+                Back to Library
               </button>
             </div>
           ) : (
             <>
-              {/* Left Page (Text) */}
-              <div className="w-full md:w-1/2 h-full p-8 md:p-16 flex flex-col justify-center bg-[#fdfbf7] relative border-b md:border-b-0 md:border-r border-black/5">
-                <button 
-                  onClick={() => readAloud(pageData.text)}
-                  className="absolute top-8 left-8 p-3 bg-orange-100 text-orange-600 rounded-2xl hover:bg-orange-200 transition"
-                  title="Listen to the magic"
-                >
-                  <Volume2 size={24} />
-                </button>
-                <div className="absolute bottom-8 left-8 text-[10px] font-black uppercase tracking-widest text-gray-300">
-                  {currentBook.title} • Page {pageIndex + 1}
+              {/* Left Page (Story Content) */}
+              <div className="w-full md:w-1/2 h-full p-10 md:p-20 flex flex-col justify-center bg-[#fdfbf7] relative border-b md:border-b-0 md:border-r-2 border-black/5">
+                <div className="absolute top-10 left-10 flex items-center gap-4">
+                  <button 
+                    onClick={() => readAloud(pageData.text)}
+                    className="p-4 bg-orange-100 text-orange-600 rounded-2xl hover:bg-orange-600 hover:text-white transition-all shadow-lg active:scale-90"
+                    title="Read Aloud"
+                  >
+                    <Volume2 size={28} />
+                  </button>
+                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Chapter {pageIndex + 1}</span>
                 </div>
-                {/* Large Responsive Text */}
-                <p className="text-3xl md:text-5xl font-serif text-gray-800 leading-tight md:leading-snug select-none">
-                  {pageData.text}
-                </p>
+                
+                {/* Responsive Large Story Text */}
+                <div className="max-w-md mx-auto">
+                   <p className="text-4xl md:text-6xl font-serif text-gray-900 leading-[1.15] md:leading-[1.1] selection:bg-orange-200 select-none">
+                    {pageData.text}
+                  </p>
+                </div>
+
+                <div className="absolute bottom-10 left-10 text-[9px] font-black uppercase tracking-[0.5em] text-gray-400">
+                  {currentBook.author} • Realm of {selectedRealm.animal}
+                </div>
               </div>
 
-              {/* Right Page (Image) */}
-              <div className="w-full md:w-1/2 h-full bg-gray-100 relative overflow-hidden group">
+              {/* Right Page (Illustration) */}
+              <div className="w-full md:w-1/2 h-full bg-[#eee] relative overflow-hidden group">
                 <img 
                   key={pageIndex}
                   src={pageData.image} 
                   alt="Story scene" 
-                  className="w-full h-full object-cover animate-fade-in" 
+                  className="w-full h-full object-cover animate-fade-in-scale" 
                 />
-                <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.2)] pointer-events-none" />
-                <div className="absolute bottom-8 right-8 text-[10px] font-black uppercase tracking-widest text-white/50">
-                   Page {pageIndex + 1} • {selectedRealm.animal} Territory
+                <div className="absolute inset-0 bg-gradient-to-l from-black/20 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-10 right-10 text-white font-black text-sm p-4 bg-black/40 backdrop-blur-md rounded-2xl border border-white/20">
+                   Page {pageIndex + 1}
                 </div>
               </div>
             </>
@@ -275,26 +310,30 @@ export default function App() {
       </div>
 
       {/* Magical Navigation Bar */}
-      <div className="mt-10 flex items-center gap-8 z-10">
+      <div className="mt-12 flex items-center gap-10 z-50">
         <button 
           onClick={() => turnPage('prev')} 
           disabled={pageIndex === 0}
-          className={`group flex items-center gap-3 px-6 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 ${
+          className={`group flex items-center gap-4 px-10 py-5 rounded-3xl font-black uppercase tracking-[0.2em] transition-all duration-500 shadow-2xl ${
             pageIndex === 0 
-            ? 'bg-white/5 text-white/10 cursor-not-allowed' 
-            : 'bg-white text-black hover:bg-orange-500 hover:text-white shadow-xl hover:shadow-orange-500/40'
+            ? 'bg-white/5 text-white/10 cursor-not-allowed opacity-50' 
+            : 'bg-white text-black hover:bg-orange-500 hover:text-white active:scale-90'
           }`}
         >
-          <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" /> Back
+          <ChevronLeft size={28} className="group-hover:-translate-x-2 transition-transform" />
         </button>
         
-        {/* Page Dots */}
-        <div className="hidden md:flex gap-3">
+        {/* Progress Tracker */}
+        <div className="hidden lg:flex gap-4">
           {[...Array(currentBook.pages.length + 1)].map((_, i) => (
-            <div 
-              key={i} 
-              className={`h-2 rounded-full transition-all duration-500 ${
-                i === pageIndex ? 'w-12 bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]' : 'w-2 bg-white/20'
+            <button
+              key={i}
+              onClick={() => {
+                setPageIndex(i);
+                window.speechSynthesis.cancel();
+              }}
+              className={`h-3 rounded-full transition-all duration-700 ${
+                i === pageIndex ? 'w-16 bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.8)]' : 'w-3 bg-white/20 hover:bg-white/40'
               }`} 
             />
           ))}
@@ -303,29 +342,48 @@ export default function App() {
         <button 
           onClick={() => turnPage('next')} 
           disabled={isEndPage}
-          className={`group flex items-center gap-3 px-8 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 ${
+          className={`group flex items-center gap-4 px-12 py-5 rounded-3xl font-black uppercase tracking-[0.2em] transition-all duration-500 shadow-2xl ${
             isEndPage 
-            ? 'bg-white/5 text-white/10 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xl hover:shadow-orange-500/50 hover:scale-105 active:scale-95'
+            ? 'bg-white/5 text-white/10 cursor-not-allowed opacity-50' 
+            : 'bg-gradient-to-r from-orange-500 to-red-600 text-white hover:scale-105 hover:shadow-orange-600/50 active:scale-90'
           }`}
         >
-          {pageIndex === currentBook.pages.length - 1 ? 'Finish Tale' : 'Next Page'} <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+          {pageIndex === currentBook.pages.length - 1 ? 'End Tale' : 'Next'} <ChevronRight size={28} className="group-hover:translate-x-2 transition-transform" />
         </button>
       </div>
 
-      {/* Global CSS for Animations */}
       <style>{`
         @keyframes page-flip-next {
-          0% { transform: perspective(2000px) rotateY(0deg); }
-          50% { transform: perspective(2000px) rotateY(-5deg) scale(0.98); }
-          100% { transform: perspective(2000px) rotateY(0deg); }
+          0% { transform: perspective(3000px) rotateY(0deg) scale(1); }
+          50% { transform: perspective(3000px) rotateY(-8deg) scale(0.96); opacity: 0.8; }
+          100% { transform: perspective(3000px) rotateY(0deg) scale(1); }
+        }
+        @keyframes page-flip-prev {
+          0% { transform: perspective(3000px) rotateY(0deg) scale(1); }
+          50% { transform: perspective(3000px) rotateY(8deg) scale(0.96); opacity: 0.8; }
+          100% { transform: perspective(3000px) rotateY(0deg) scale(1); }
+        }
+        @keyframes fade-in-scale {
+          from { opacity: 0; transform: scale(1.15); filter: blur(10px); }
+          to { opacity: 1; transform: scale(1); filter: blur(0); }
         }
         @keyframes fade-in {
-          from { opacity: 0; transform: scale(1.05); }
-          to { opacity: 1; transform: scale(1); }
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        .animate-page-flip-next { animation: page-flip-next 0.4s ease-in-out; }
-        .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+        .animate-page-flip-next { animation: page-flip-next 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .animate-page-flip-prev { animation: page-flip-prev 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .animate-fade-in-scale { animation: fade-in-scale 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-fade-in { animation: fade-in 0.8s ease-out forwards; }
+        .animate-spin-slow { animation: spin 8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .shadow-inner-xl {
+          box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+        }
+        
+        /* Perspective utilities */
+        .perspective-1000 { perspective: 1000px; }
       `}</style>
     </div>
   );
