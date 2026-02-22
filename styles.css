@@ -3,34 +3,28 @@ const stories = [
     {
         id: 'eli-the-elephant',
         title: "Eli the Honest Elephant",
-        // මෙහි ඔබගේ කවරයේ පින්තූරයේ නම ඇත
         cover: "coverpage.jpg",
-        theme: "Honesty",
+        theme: "Honesty & Truth",
         moral: "Honesty is always the best policy; telling the truth frees you from guilt and builds trust with those you love.",
         pages: [
             {
                 text: "Eli the little elephant loved peanuts, but today he promised his mama he wouldn't eat any before dinner.",
-                // පිටුව 1 පින්තූරය
                 image: "page1.jpg"
             },
             {
                 text: "When Mama asked if he ate the peanuts, Eli shook his head and said, 'No, a mischievous monkey must have taken them!'",
-                // පිටුව 2 පින්තූරය
                 image: "page2.jpg"
             },
             {
                 text: "Later, his tummy started to rumble and grumble really loud because he had eaten too many peanuts.",
-                // පිටුව 3 පින්තූරය
                 image: "page3.jpg"
             },
             {
                 text: "Eli couldn't handle the tummy ache any longer, so he found his mama and told her the truth about eating the peanuts.",
-                // පිටුව 4 පින්තූරය
                 image: "page4.jpg"
             },
             {
                 text: "Mama hugged Eli and gave him some special leaves for his tummy, telling him that telling the truth always makes everything better.",
-                // පිටුව 5 පින්තූරය
                 image: "page5.jpg"
             }
         ]
@@ -50,6 +44,7 @@ const countryData = {
 // --- Variables ---
 let currentStory = null;
 let currentPageIndex = 0;
+let isAnimating = false;
 const appContainer = document.getElementById('app-container');
 
 // --- Functions ---
@@ -57,16 +52,24 @@ const appContainer = document.getElementById('app-container');
 // 1. Render the Library (Home Page)
 function renderLibrary() {
     let html = `
+        <div class="library-hero">
+            <h2 class="library-title">Magical Library</h2>
+            <p class="library-subtitle">Choose a story and start your adventure!</p>
+        </div>
         <div class="story-grid">
     `;
 
     stories.forEach(story => {
         html += `
             <div class="story-card" onclick="openStory('${story.id}')">
-                <img src="${story.cover}" alt="${story.title}" class="story-cover">
-                <h2>${story.title}</h2>
-                <p>A story about ${story.theme}</p>
-                <button class="read-btn"><i class="fas fa-book-reader"></i> Read Story</button>
+                <div class="card-image-container">
+                    <img src="${story.cover}" alt="${story.title}" class="story-cover">
+                    <div class="card-badge">${story.theme}</div>
+                </div>
+                <div class="card-content">
+                    <h2>${story.title}</h2>
+                    <button class="read-btn"><i class="fas fa-magic"></i> Open Book</button>
+                </div>
             </div>
         `;
     });
@@ -74,7 +77,8 @@ function renderLibrary() {
     html += `
         </div>
         <div class="adsense-placeholder">
-            [ Google AdSense Display Banner - Passive Income ]
+            <small>ADVERTISEMENT</small>
+            <br> [ Google AdSense Display Banner ]
         </div>
     `;
 
@@ -88,64 +92,76 @@ window.openStory = function(storyId) {
     renderStoryPage();
 };
 
-// 3. Render a Specific Page of the Story
+// 3. Render a Specific Page with Book Animation
 function renderStoryPage() {
     if (!currentStory) return;
 
     const isEndPage = currentPageIndex === currentStory.pages.length;
 
     let html = `
-        <button onclick="closeStory()" style="margin-bottom: 20px; padding: 10px 20px; border-radius: 20px; border: none; cursor:pointer; background-color: #e5e7eb; font-weight: bold;">
-            <i class="fas fa-arrow-left"></i> Back to Library
-        </button>
+        <div class="reader-header">
+            <button onclick="closeStory()" class="back-btn">
+                <i class="fas fa-times"></i> Exit
+            </button>
+            <div class="page-counter">Step ${currentPageIndex + 1} of ${currentStory.pages.length + 1}</div>
+        </div>
     `;
 
     if (isEndPage) {
-        // Render The End / Moral Page
         html += `
-            <div class="flipbook-container end-page">
-                <i class="fas fa-check-circle" style="font-size: 5rem; color: #4ade80; margin-bottom: 20px;"></i>
-                <h2 style="font-size: 3rem; color: #1f2937;" class="notranslate">The End!</h2>
-                
-                <div class="moral-box">
-                    <h3><i class="fas fa-star" style="color: #f59e0b;"></i> Moral of the Story</h3>
-                    <p class="moral-text">"${currentStory.moral}"</p>
-                </div>
-
-                <div class="upsell-box">
-                    <h4>Parents: Support our free stories!</h4>
-                    <button style="padding: 10px 20px; background: #ea580c; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
-                        Download High-Quality PDF ($1)
-                    </button>
+            <div class="book-frame animate-in">
+                <div class="end-screen">
+                    <div class="magic-sparkles"></div>
+                    <i class="fas fa-certificate end-medal"></i>
+                    <h2 class="end-title notranslate">The Golden End</h2>
+                    <div class="moral-container">
+                        <h3><i class="fas fa-star"></i> Wisdom Earned</h3>
+                        <p class="moral-big-text">"${currentStory.moral}"</p>
+                    </div>
+                    <div class="reward-box">
+                        <p>You've completed the story!</p>
+                        <button class="download-btn"><i class="fas fa-cloud-download-alt"></i> Get Memory PDF ($1)</button>
+                    </div>
                 </div>
             </div>
         `;
     } else {
-        // Render a normal Story Page
         const pageData = currentStory.pages[currentPageIndex];
         html += `
-            <div class="flipbook-container">
-                <div class="page-text-side">
-                    <button class="read-aloud-btn" onclick="readAloud()" title="Read Out Loud">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    <p class="page-text">${pageData.text}</p>
+            <div class="book-frame ${isAnimating ? 'turning' : 'animate-in'}">
+                <div class="book-spine"></div>
+                <div class="book-page left-page">
+                    <div class="page-content">
+                        <button class="speak-btn" onclick="readAloud()" title="Listen to Story">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <p class="story-text-display">${pageData.text}</p>
+                    </div>
+                    <div class="page-number">${(currentPageIndex * 2) + 1}</div>
                 </div>
-                <div class="page-image-side">
-                    <img src="${pageData.image}" alt="Story Scene" class="page-image">
+                <div class="book-page right-page">
+                    <div class="image-wrapper">
+                        <img src="${pageData.image}" alt="Eli Scene" class="story-img-main">
+                        <div class="img-overlay"></div>
+                    </div>
+                    <div class="page-number">${(currentPageIndex * 2) + 2}</div>
                 </div>
             </div>
         `;
     }
 
-    // Navigation Buttons
+    // Modern Navigation Controls
     html += `
-        <div class="book-controls">
-            <button class="nav-btn prev" onclick="turnPage(-1)" ${currentPageIndex === 0 ? 'disabled' : ''}>
-                <i class="fas fa-chevron-left"></i> Previous
+        <div class="navigation-bar">
+            <button class="nav-control prev" onclick="turnPage(-1)" ${currentPageIndex === 0 ? 'disabled' : ''}>
+                <i class="fas fa-arrow-left"></i> Previous
             </button>
-            <button class="nav-btn next" onclick="turnPage(1)" ${isEndPage ? 'disabled' : ''}>
-                Next <i class="fas fa-chevron-right"></i>
+            <div class="nav-indicator">
+                ${currentStory.pages.map((_, i) => `<div class="dot ${i === currentPageIndex ? 'active' : ''}"></div>`).join('')}
+                <div class="dot ${isEndPage ? 'active' : ''}"></div>
+            </div>
+            <button class="nav-control next" onclick="turnPage(1)" ${isEndPage ? 'disabled' : ''}>
+                ${isEndPage ? 'Finished' : 'Next <i class="fas fa-arrow-right"></i>'}
             </button>
         </div>
     `;
@@ -153,12 +169,22 @@ function renderStoryPage() {
     appContainer.innerHTML = html;
 }
 
-// 4. Turn Page
+// 4. Turn Page with Simulated Scrolling/Flipping
 window.turnPage = function(direction) {
+    if (isAnimating) return;
+    
     const newPage = currentPageIndex + direction;
     if (newPage >= 0 && newPage <= currentStory.pages.length) {
-        currentPageIndex = newPage;
+        isAnimating = true;
+        
+        // Render with turning class
         renderStoryPage();
+        
+        setTimeout(() => {
+            currentPageIndex = newPage;
+            isAnimating = false;
+            renderStoryPage();
+        }, 600); // Wait for transition
     }
 };
 
@@ -168,38 +194,31 @@ window.closeStory = function() {
     renderLibrary();
 };
 
-// 6. Read Aloud functionality (Text to Speech)
+// 6. Read Aloud (Enhanced)
 window.readAloud = function() {
-    if (!currentStory) return;
+    if (!currentStory || currentPageIndex >= currentStory.pages.length) return;
     const textToRead = currentStory.pages[currentPageIndex].text;
     
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Stop any current speech
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(textToRead);
-        
-        // Attempt to match the spoken language with the currently selected language in Google Translate
-        const htmlLang = document.documentElement.lang || 'en';
-        utterance.lang = htmlLang;
-        
+        utterance.lang = document.documentElement.lang || 'en';
+        utterance.pitch = 1.1; // Kid-friendly high pitch
+        utterance.rate = 0.9;  // Slightly slower for better understanding
         window.speechSynthesis.speak(utterance);
-    } else {
-        alert("Sorry, your browser doesn't support Text-to-Speech.");
     }
 };
 
-// 7. Watch for Language Changes to update Country Info
+// 7. Watch for Language Changes
 setInterval(() => {
     const infoDiv = document.getElementById('country-info');
     if(!infoDiv) return;
-    
-    // Google Translate dynamically adds a class or changes lang attribute. 
-    // For this prototype, we'll listen to the select box if it exists.
     const selectBox = document.querySelector('.goog-te-combo');
     if (selectBox && selectBox.value) {
         const currentLangCode = selectBox.value;
         if (countryData[currentLangCode]) {
             const data = countryData[currentLangCode];
-            infoDiv.innerHTML = `${data.flag} Reading in ${currentLangCode.toUpperCase()} | Fun Fact: National Animal is ${data.animal}`;
+            infoDiv.innerHTML = `<span class="flag-icon">${data.flag}</span> Reading in <strong>${currentLangCode.toUpperCase()}</strong> | National Animal: <strong>${data.animal}</strong>`;
         }
     }
 }, 2000);
